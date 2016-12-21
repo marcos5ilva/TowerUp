@@ -39,6 +39,10 @@ var GameState = {
         this.load.spritesheet('fire', 'assets/images/fire_spritesheet.png', 20, 21, 2, 1, 1 );
         this.load.spritesheet('player', 'assets/images/knight_spritesheetPB.png', 64, 64, 8, 1, 1);
         
+        //load sounds
+        this.load.audio('jump', ['assets/sounds/jump.ogg', 'assets/sounds/jump.mp3']);
+        this.load.audio('levelTheme', ['assets/sounds/Komiku_-_06_-_Filthy.mp3']);
+        
         //load tiled level
         
         this.load.tilemap('towerUp1', 'assets/graphics/towerUp1.json', null, Phaser.Tilemap.TILED_JSON);
@@ -53,7 +57,9 @@ var GameState = {
         //Create level platforms and background
         this.createLevel();
      
-        
+        //creat sound effects
+        this.jumpSound = this.add.audio('jump');
+        this.levelTheme = this.add.audio('levelTheme', 0.3, true);
         
         //create player
         this.player = this.add.sprite(10, 450, 'player', 0);
@@ -73,6 +79,10 @@ var GameState = {
         
         //create camera
         this.game.camera.follow(this.player);
+        
+        //play level theme sound
+        
+        this.levelTheme.play();
     },
     
     update: function () {
@@ -118,6 +128,7 @@ var GameState = {
             this.player.body.velocity.y= -this.JUMPING_SPEED;
             this.player.frame =5;
             this.player.customParams.mustJump = false;
+             this.jumpSound.play();
             
         }
         else{
