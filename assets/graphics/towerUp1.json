@@ -78,31 +78,122 @@
          "y":0
         }, 
         {
-         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         "draworder":"topdown",
          "height":18,
-         "name":"Secret",
+         "name":"secretPassage",
+         "objects":[
+                {
+                 "height":64,
+                 "id":1,
+                 "name":"secretPassage",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":352,
+                 "y":129
+                }],
          "opacity":1,
-         "type":"tilelayer",
+         "type":"objectgroup",
+         "visible":true,
+         "width":17,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "height":18,
+         "name":"activateBlock",
+         "objects":[
+                {
+                 "height":32,
+                 "id":5,
+                 "name":"activateBlock",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":384,
+                 "y":256
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "width":17,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "height":18,
+         "name":"tresure",
+         "objects":[
+                {
+                 "height":32,
+                 "id":6,
+                 "name":"chest1",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":32,
+                 "y":258
+                }, 
+                {
+                 "height":32,
+                 "id":7,
+                 "name":"chest2",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":479,
+                 "y":353
+                }],
+         "opacity":0.899999976158142,
+         "type":"objectgroup",
          "visible":true,
          "width":17,
          "x":0,
          "y":0
         }],
- "nextobjectid":1,
+ "nextobjectid":8,
  "orientation":"orthogonal",
+ "properties":
+    {
+
+    },
  "renderorder":"left-down",
  "tileheight":32,
  "tilesets":[
         {
-         "columns":3,
          "firstgid":1,
          "image":"blackAndWhiteTiles.png",
          "imageheight":192,
          "imagewidth":96,
          "margin":0,
          "name":"blackAndWhiteTiles",
+         "properties":
+            {
+
+            },
          "spacing":0,
-         "tilecount":18,
          "tileheight":32,
          "tilewidth":32
         }],

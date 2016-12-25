@@ -30,21 +30,25 @@ var GameState = {
         //load game image assets
         this.load.image('actionButton', 'assets/images/actionButton.png');
         this.load.image('arrowButton', 'assets/images/arrowButton.png');
-        this.load.image('barrel', 'assets/images/barrel.png');
-        this.load.image('goal', 'assets/images/gorilla3.png');
-        this.load.image('ground', 'assets/images/ground.png');
-        this.load.image('platform', 'assets/images/platform.png');
+        //this.load.image('barrel', 'assets/images/barrel.png');
+        //this.load.image('goal', 'assets/images/gorilla3.png');
+        //this.load.image('ground', 'assets/images/ground.png');
+        //this.load.image('platform', 'assets/images/platform.png');
+        this.load.image('activateBlock', 'assets/graphics/activateBlock.png');
+        this.load.image('secretPassage', 'assets/graphics/secretPassage.png');
         
         //load game spritesheets
-        this.load.spritesheet('fire', 'assets/images/fire_spritesheet.png', 20, 21, 2, 1, 1 );
+        //this.load.spritesheet('fire', 'assets/images/fire_spritesheet.png', 20, 21, 2, 1, 1 );
         this.load.spritesheet('player', 'assets/images/knight_spritesheetPB.png', 64, 64, 8, 1, 1);
         
+        this.load.spritesheet('chest', 'assets/graphics/chest.png', 32, 32, 3, 1, 1);
         //load sounds
         this.load.audio('jump', ['assets/sounds/jump.ogg', 'assets/sounds/jump.mp3']);
+        this.load.audio('dragStone', ['assets/sounds/draggingStone.ogg', 'assets/sounds/draggingStone.mp3']);
         this.load.audio('levelTheme', ['assets/sounds/Komiku_-_06_-_Filthy.mp3']);
+        this.load.audio('chestOpening', ['assets/sounds/chestOpening.ogg', 'assets/sounds/chestOpening.mp3']);
         
         //load tiled level
-        
         this.load.tilemap('towerUp1', 'assets/graphics/towerUp1.json', null, Phaser.Tilemap.TILED_JSON);
         
         this.load.image('tiles', 'assets/graphics/blackAndWhiteTiles.png');
@@ -59,7 +63,52 @@ var GameState = {
      
         //creat sound effects
         this.jumpSound = this.add.audio('jump');
+        this.dragStone = this.add.audio('dragStone', 0.7, false);
         this.levelTheme = this.add.audio('levelTheme', 0.3, true);
+        this.chestOpening = this.add.audio('chestOpening', 0.5, false);
+        
+        //create tile objects activateBlock and secretPassage
+        this.activateBlock = game.add.sprite(-32 , 600, 'activateBlock');
+        this.secretPassage = game.add.sprite(-32 , 600, 'secretPassage');
+        
+        //create tresure tiles
+        this.tresure = game.add.group();
+        this.level.createFromObjects('tresure', 'chest1', 'chest', 0, true, false, this.tresure);
+        this.level.createFromObjects('tresure', 'chest2', 'chest', 0, true, false, this.tresure);
+        game.physics.arcade.enable(this.tresure);
+       
+        this.tresure.setAll('anchor.y', -1);
+        this.tresure.setAll('body.immovable', true);
+        this.tresure.setAll('body.allowGravity', false);
+        
+         this.game.physics.arcade.enable(this.activateBlock);
+         this.game.physics.arcade.enable(this.secretPassage);
+        
+        
+        //objects level position for activateBlock and secretPassage
+        this.level.objects['activateBlock'].forEach(function(element){
+             this.activateBlock.x = element.x;
+            this.activateBlock.y = element.y;                                       
+        }, this);
+        
+        this.level.objects['secretPassage'].forEach(function(element){
+            this.secretPassage.x = element.x;
+            this.secretPassage.y = element.y;                                       
+        }, this);
+        
+        
+        
+        this.secretPassage.enableBody = true;
+        this.secretPassage.body.immovable = true;
+        this.secretPassage.body.allowGravity =false;
+        
+        
+        this.activateBlock.enableBody = true;
+        this.activateBlock.body.immovable = true;
+        this.activateBlock.body.allowGravity =false;
+        
+        //chef if is the first time the player colide with the activateBlock
+         this.activateSecret = false;
         
         //create player
         this.player = this.add.sprite(10, 450, 'player', 0);
@@ -72,7 +121,6 @@ var GameState = {
         this.player.body.collideWorldBounds=true;
         this.player.body.setSize(40, 54, 1,1);
         this.player.customParams={};
-        
         
         //create screen controls 
         this.createOnscreenControls();
@@ -94,6 +142,17 @@ var GameState = {
         
         this.game.physics.arcade.collide(this.player, this.layerEnemy, this.killPlayer);
         this.game.physics.arcade.overlap(this.player, this.layerBorder, this.grabPlayer, null, this);
+        this.game.physics.arcade.overlap(this.player, this.tresure, this.chestOpen, null, this);
+        
+        //this.game.physics.arcade.collide(this.activateBlock, this.layerPlatform);
+        //this.game.physics.arcade.collide(this.activateBlock, this.layerGround);
+        //this.game.physics.arcade.collide(this.activateBlock, this.layerWall);
+        this.game.physics.arcade.collide(this.player, this.activateBlock, this.openPassage, null, this);
+        
+        //this.game.physics.arcade.collide(this.secretPassage, this.layerPlatform);
+        //this.game.physics.arcade.collide(this.secretPassage, this.layerGround);
+        //this.game.physics.arcade.collide(this.secretPassage, this.layerWall);
+        this.game.physics.arcade.collide(this.secretPassage, this.player);
         
         /*
        
@@ -124,18 +183,23 @@ var GameState = {
             this.player.scale.setTo(1,1); //flipping player sprite
             this.player.play('walking'); 
         }
-        else if((this.cursors.up.isDown || this.player.customParams.mustJump) && this.player.body.onFloor()){
+        else if((this.cursors.up.isDown || this.player.customParams.mustJump) && (this.player.body.onFloor() || this.player.body.touching.down) ){
             this.player.body.velocity.y= -this.JUMPING_SPEED;
             this.player.frame =5;
             this.player.customParams.mustJump = false;
-             this.jumpSound.play();
+            this.jumpSound.play();
+            
             
         }
         else{
                 this.player.animations.stop();
                 if( this.player.body.onFloor()){
                     this.player.frame =0;
-                }
+                };
+            
+            if(!this.player.customParams.mustJump && this.player.body.touching.down){
+                this.jumpSound.play();
+            }
         }
     },
     
@@ -228,12 +292,27 @@ var GameState = {
         this.level.setCollisionBetween(0, 576, true, 'Border');
         this.level.setCollisionBetween(0, 576, true, 'Wall');
         this.level.setCollisionBetween(0, 576, true, 'Enemy');
+     
         
     },
     
     killPlayer: function(player, fire){
         game.state.start('GameState');
     },
+    
+    openPassage: function(player, activateBlock){
+        
+        if(!this.activateSecret && this.player.body.touching.down && this.activateBlock.body.touching.up ){
+        var tween = game.add.tween(this.secretPassage);
+        tween.to({ y: 60}, 1000, 'Linear', true, 0);
+        tween.start();
+        this.dragStone.play();
+        
+        this.activateSecret =true;
+        }
+    },
+    
+
     
     winGame: function(player, goal){
         console.log('you win!')
@@ -243,6 +322,19 @@ var GameState = {
     grabPlayer: function(player, layerBorder){
        // player.frame =7;
         //player.customParams.mustJump = true;
+    },
+    
+    chestOpen: function(player, tresure){
+        
+             this.chestOpening.play();
+            this.tresure.forEach(function(chest){
+               
+                chest.frame = 1;
+                console.log("chest opened");
+                console.log (chest);
+            });
+       
+            
     },
     
     createBarrel: function (){
