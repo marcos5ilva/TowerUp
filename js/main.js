@@ -80,6 +80,7 @@ var GameState = {
         this.tresure.setAll('anchor.y', -1);
         this.tresure.setAll('body.immovable', true);
         this.tresure.setAll('body.allowGravity', false);
+        console.log(this.tresure);
         
          this.game.physics.arcade.enable(this.activateBlock);
          this.game.physics.arcade.enable(this.secretPassage);
@@ -189,6 +190,7 @@ var GameState = {
             this.player.customParams.mustJump = false;
             this.jumpSound.play();
             
+                    
             
         }
         else{
@@ -324,17 +326,11 @@ var GameState = {
         //player.customParams.mustJump = true;
     },
     
-    chestOpen: function(player, tresure){
+    chestOpen: function(player, chest){
         
              this.chestOpening.play();
-            this.tresure.forEach(function(chest){
-               
-                chest.frame = 1;
-                console.log("chest opened");
-                console.log (chest);
-            });
-       
-            
+             chest.frame = 1;
+     
     },
     
     createBarrel: function (){
