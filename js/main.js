@@ -42,7 +42,7 @@ var GameState = {
         //this.load.spritesheet('player', 'assets/images/knight_spritesheetPB.png', 64, 64, 8, 1, 1);
         this.load.spritesheet('player', 'assets/graphics/thief48.png', 47, 48, 3, 1, 1);
         
-        this.load.spritesheet('chest', 'assets/graphics/chest.png', 32, 32, 3, 1, 1);
+        this.load.spritesheet('chest', 'assets/graphics/chest24.png', 24, 24, 3, 1, 1);
         //load sounds
         this.load.audio('jump', ['assets/sounds/jump.ogg', 'assets/sounds/jump.mp3']);
         this.load.audio('dragStone', ['assets/sounds/draggingStone.ogg', 'assets/sounds/draggingStone.mp3']);

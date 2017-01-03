@@ -79,7 +79,7 @@
         }, 
         {
          "draworder":"topdown",
-         "height":18,
+         "height":0,
          "name":"secretPassage",
          "objects":[
                 {
@@ -100,13 +100,13 @@
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
-         "width":17,
+         "width":0,
          "x":0,
          "y":0
         }, 
         {
          "draworder":"topdown",
-         "height":18,
+         "height":0,
          "name":"activateBlock",
          "objects":[
                 {
@@ -127,17 +127,17 @@
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
-         "width":17,
+         "width":0,
          "x":0,
          "y":0
         }, 
         {
          "draworder":"topdown",
-         "height":18,
+         "height":0,
          "name":"tresure",
          "objects":[
                 {
-                 "height":32,
+                 "height":24,
                  "id":6,
                  "name":"chest1",
                  "properties":
@@ -147,12 +147,12 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":32,
-                 "x":32,
-                 "y":258
+                 "width":24,
+                 "x":31,
+                 "y":266
                 }, 
                 {
-                 "height":32,
+                 "height":24,
                  "id":7,
                  "name":"chest2",
                  "properties":
@@ -162,14 +162,14 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":32,
-                 "x":479,
-                 "y":353
+                 "width":24,
+                 "x":487,
+                 "y":361
                 }],
          "opacity":0.899999976158142,
          "type":"objectgroup",
          "visible":true,
-         "width":17,
+         "width":0,
          "x":0,
          "y":0
         }],
