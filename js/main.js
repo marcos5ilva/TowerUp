@@ -333,6 +333,13 @@ var GameState = {
         
              this.chestOpening.play();
              chest.frame = 1;
+            
+            game.time.events.add(Phaser.Timer.SECOND * 1, function(){
+              
+                chest.destroy();
+            }, this).autoDestory = true;
+                
+            
      
     },
     
