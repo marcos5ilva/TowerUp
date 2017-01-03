@@ -39,7 +39,8 @@ var GameState = {
         
         //load game spritesheets
         //this.load.spritesheet('fire', 'assets/images/fire_spritesheet.png', 20, 21, 2, 1, 1 );
-        this.load.spritesheet('player', 'assets/images/knight_spritesheetPB.png', 64, 64, 8, 1, 1);
+        //this.load.spritesheet('player', 'assets/images/knight_spritesheetPB.png', 64, 64, 8, 1, 1);
+        this.load.spritesheet('player', 'assets/graphics/thief48.png', 47, 48, 3, 1, 1);
         
         this.load.spritesheet('chest', 'assets/graphics/chest.png', 32, 32, 3, 1, 1);
         //load sounds
@@ -112,15 +113,16 @@ var GameState = {
          this.activateSecret = false;
         
         //create player
-        this.player = this.add.sprite(10, 450, 'player', 0);
+        this.player = this.add.sprite(10, 450, 'player', 1);
         this.player.anchor.setTo(0.5);
-        this.player.animations.add('walking', [1, 2, 3, 4], 6, true);
+        this.player.animations.add('walking', [0, 1], 7, true);
+         this.player.animations.add('idle', [0, 1], 1, true);
      
      
         //enable physical body on platform sprite
         this.game.physics.arcade.enable(this.player);
         this.player.body.collideWorldBounds=true;
-        this.player.body.setSize(40, 54, 1,1);
+        this.player.body.setSize(32, 45, 1,1);
         this.player.customParams={};
         
         //create screen controls 
@@ -186,7 +188,7 @@ var GameState = {
         }
         else if((this.cursors.up.isDown || this.player.customParams.mustJump) && (this.player.body.onFloor() || this.player.body.touching.down) ){
             this.player.body.velocity.y= -this.JUMPING_SPEED;
-            this.player.frame =5;
+            this.player.frame =2;
             this.player.customParams.mustJump = false;
             this.jumpSound.play();
             
@@ -197,6 +199,7 @@ var GameState = {
                 this.player.animations.stop();
                 if( this.player.body.onFloor()){
                     this.player.frame =0;
+                    //this.player.play('idle');
                 };
             
             if(!this.player.customParams.mustJump && this.player.body.touching.down){
