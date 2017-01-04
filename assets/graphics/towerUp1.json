@@ -111,7 +111,7 @@
          "objects":[
                 {
                  "height":32,
-                 "id":5,
+                 "id":14,
                  "name":"activateBlock",
                  "properties":
                     {
@@ -121,7 +121,7 @@
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":384,
+                 "x":383,
                  "y":256
                 }],
          "opacity":1,
@@ -172,8 +172,35 @@
          "width":0,
          "x":0,
          "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "height":18,
+         "name":"keyRegular",
+         "objects":[
+                {
+                 "height":24,
+                 "id":11,
+                 "name":"keyRegu",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":24,
+                 "x":487,
+                 "y":333
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "width":17,
+         "x":0,
+         "y":0
         }],
- "nextobjectid":8,
+ "nextobjectid":15,
  "orientation":"orthogonal",
  "properties":
     {

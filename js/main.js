@@ -43,6 +43,8 @@ var GameState = {
         this.load.spritesheet('player', 'assets/graphics/thief48.png', 47, 48, 3, 1, 1);
         
         this.load.spritesheet('chest', 'assets/graphics/chest24.png', 24, 24, 3, 1, 1);
+        this.load.spritesheet('keyRegular', 'assets/graphics/keyRegular.png', 23, 24, 7, 1,1);
+        
         //load sounds
         this.load.audio('jump', ['assets/sounds/jump.ogg', 'assets/sounds/jump.mp3']);
         this.load.audio('dragStone', ['assets/sounds/draggingStone.ogg', 'assets/sounds/draggingStone.mp3']);
@@ -71,11 +73,13 @@ var GameState = {
         //create tile objects activateBlock and secretPassage
         this.activateBlock = game.add.sprite(-32 , 600, 'activateBlock');
         this.secretPassage = game.add.sprite(-32 , 600, 'secretPassage');
+        this.keyRegular = game.add.sprite(-32 , 600, 'keyRegular');
         
         //create tresure tiles
         this.tresure = game.add.group();
         this.level.createFromObjects('tresure', 'chest1', 'chest', 0, true, false, this.tresure);
         this.level.createFromObjects('tresure', 'chest2', 'chest', 0, true, false, this.tresure);
+        
         game.physics.arcade.enable(this.tresure);
        
         this.tresure.setAll('anchor.y', -1);
@@ -85,6 +89,7 @@ var GameState = {
         
          this.game.physics.arcade.enable(this.activateBlock);
          this.game.physics.arcade.enable(this.secretPassage);
+        this.game.physics.arcade.enable(this.keyRegular);
         
         
         //objects level position for activateBlock and secretPassage
@@ -98,6 +103,11 @@ var GameState = {
             this.secretPassage.y = element.y;                                       
         }, this);
         
+        this.level.objects['keyRegular'].forEach(function(element){
+            this.keyRegular.x = element.x;
+            this.keyRegular.y = element.y;                                       
+        }, this);
+        
         
         
         this.secretPassage.enableBody = true;
@@ -109,6 +119,11 @@ var GameState = {
         this.activateBlock.body.immovable = true;
         this.activateBlock.body.allowGravity =false;
         
+         this.keyRegular.enableBody = true;
+        this.keyRegular.body.immovable = true;
+        this.keyRegular.body.allowGravity = false;
+        this.keyRegular.visible =false;
+        
         //chef if is the first time the player colide with the activateBlock
          this.activateSecret = false;
         
@@ -118,6 +133,8 @@ var GameState = {
         this.player.animations.add('walking', [0, 1], 7, true);
          this.player.animations.add('idle', [0, 1], 1, true);
      
+        
+        this.keyRegular.animations.add('girar', [0, 1,2,3,4,5], 6, true);
      
         //enable physical body on platform sprite
         this.game.physics.arcade.enable(this.player);
@@ -333,7 +350,8 @@ var GameState = {
         
              this.chestOpening.play();
              chest.frame = 1;
-            
+        this.keyRegular.visible = true;
+          this.keyRegular.play('girar');  
             game.time.events.add(Phaser.Timer.SECOND * 1, function(){
               
                 chest.destroy();
