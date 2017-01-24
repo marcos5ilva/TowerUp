@@ -15,12 +15,19 @@ var GameState = {
         //set player control
         this.cursors = this.game.input.keyboard.createCursorKeys();//listening pressed arrow keys
         
+        //WASD Controls
+        game.input.keyboard.addKey(Phaser.Keyboard.W);
+        game.input.keyboard.addKey(Phaser.Keyboard.A);
+        game.input.keyboard.addKey(Phaser.Keyboard.S);
+        game.input.keyboard.addKey(Phaser.Keyboard.D);
+
         //game bounds
         //this.game.world.setBounds (0, 0, 360, 700);
         
         //constants
         this.RUNNING_SPEED = 180;
-        this.JUMPING_SPEED = 460;
+        this.JUMPING_SPEED = 445;
+        this.RATS_SPEED = 50;
         
        
     },
@@ -28,22 +35,17 @@ var GameState = {
     preload: function () {
         
         //load game image assets
-        this.load.image('actionButton', 'assets/images/actionButton.png');
-        this.load.image('arrowButton', 'assets/images/arrowButton.png');
-        //this.load.image('barrel', 'assets/images/barrel.png');
-        //this.load.image('goal', 'assets/images/gorilla3.png');
-        //this.load.image('ground', 'assets/images/ground.png');
-        //this.load.image('platform', 'assets/images/platform.png');
+        this.load.image('actionButton', 'assets/graphics/actionButton.png');
+        this.load.image('arrowButton', 'assets/graphics/arrowButton.png');
         this.load.image('activateBlock', 'assets/graphics/activateBlock.png');
         this.load.image('secretPassage', 'assets/graphics/secretPassage.png');
-        
-        //load game spritesheets
-        //this.load.spritesheet('fire', 'assets/images/fire_spritesheet.png', 20, 21, 2, 1, 1 );
-        //this.load.spritesheet('player', 'assets/images/knight_spritesheetPB.png', 64, 64, 8, 1, 1);
+    
         this.load.spritesheet('player', 'assets/graphics/thief48.png', 47, 48, 3, 1, 1);
         
         this.load.spritesheet('chest', 'assets/graphics/chest24.png', 24, 24, 3, 1, 1);
         this.load.spritesheet('keyRegular', 'assets/graphics/keyRegular.png', 23, 24, 7, 1,1);
+        
+        this.load.spritesheet('rats', 'assets/graphics/rats.png', 23, 24, 4, 1,1);
         
         //load sounds
         this.load.audio('jump', ['assets/sounds/jump.ogg', 'assets/sounds/jump.mp3']);
@@ -52,9 +54,9 @@ var GameState = {
         this.load.audio('chestOpening', ['assets/sounds/chestOpening.ogg', 'assets/sounds/chestOpening.mp3']);
         
         //load tiled level
-        this.load.tilemap('towerUp1', 'assets/graphics/towerUp1.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('towerUp1', 'assets/graphics/towerUp01.json', null, Phaser.Tilemap.TILED_JSON);
         
-        this.load.image('tiles', 'assets/graphics/blackAndWhiteTiles.png');
+        this.load.image('tiles', 'assets/graphics/blackAndWhiteTiles01.png');
       
         
     },
@@ -74,6 +76,7 @@ var GameState = {
         this.activateBlock = game.add.sprite(-32 , 600, 'activateBlock');
         this.secretPassage = game.add.sprite(-32 , 600, 'secretPassage');
         this.keyRegular = game.add.sprite(-32 , 600, 'keyRegular');
+        this.rats = game.add.sprite(-32, 600, 'rats');
         
         //create tresure tiles
         this.tresure = game.add.group();
@@ -87,10 +90,10 @@ var GameState = {
         this.tresure.setAll('body.allowGravity', false);
         console.log(this.tresure);
         
-         this.game.physics.arcade.enable(this.activateBlock);
-         this.game.physics.arcade.enable(this.secretPassage);
+        this.game.physics.arcade.enable(this.activateBlock);
+        this.game.physics.arcade.enable(this.secretPassage);
         this.game.physics.arcade.enable(this.keyRegular);
-        
+        this.game.physics.arcade.enable(this.rats);
         
         //objects level position for activateBlock and secretPassage
         this.level.objects['activateBlock'].forEach(function(element){
@@ -108,6 +111,14 @@ var GameState = {
             this.keyRegular.y = element.y;                                       
         }, this);
         
+        this.level.objects['rats'].forEach(function(element){
+            this.rats.x = element.x;
+            this.rats.y = element.y;                                       
+        }, this);
+        
+        
+        
+        
         
         
         this.secretPassage.enableBody = true;
@@ -119,10 +130,15 @@ var GameState = {
         this.activateBlock.body.immovable = true;
         this.activateBlock.body.allowGravity =false;
         
-         this.keyRegular.enableBody = true;
+        this.keyRegular.enableBody = true;
         this.keyRegular.body.immovable = true;
         this.keyRegular.body.allowGravity = false;
         this.keyRegular.visible =false;
+        
+        this.rats.enableBody = true;
+        //this.rats.body.immovable = true;
+        this.rats.body.allowGravity = true;
+        this.rats.body.setSize(24, 16, 1,1);
         
         //chef if is the first time the player colide with the activateBlock
          this.activateSecret = false;
@@ -131,10 +147,13 @@ var GameState = {
         this.player = this.add.sprite(10, 450, 'player', 1);
         this.player.anchor.setTo(0.5);
         this.player.animations.add('walking', [0, 1], 7, true);
-         this.player.animations.add('idle', [0, 1], 1, true);
+        this.player.animations.add('idle', [0, 1], 1, true);
      
         
         this.keyRegular.animations.add('girar', [0, 1,2,3,4,5], 6, true);
+        
+        this.rats.animations.add('walk', [0, 1], 6, true);
+        this.rats.animations.add('attack', [2, 3], 2, false);
      
         //enable physical body on platform sprite
         this.game.physics.arcade.enable(this.player);
@@ -174,6 +193,11 @@ var GameState = {
         //this.game.physics.arcade.collide(this.secretPassage, this.layerWall);
         this.game.physics.arcade.collide(this.secretPassage, this.player);
         
+        this.game.physics.arcade.collide(this.rats, this.layerGround); 
+        this.game.physics.arcade.collide(this.rats, this.layerPlatform);
+        this.game.physics.arcade.collide(this.rats, this.layerWall, this.ratsColideWall, null, this);
+        this.game.physics.arcade.collide(this.rats, this.layerEnemyLimit, this.ratsColideWall, null, this); 
+        this.game.physics.arcade.collide(this.rats, this.player, this.killPlayer, null, this);
         /*
        
         this.game.physics.arcade.collide(this.goal, this.platforms);
@@ -183,6 +207,9 @@ var GameState = {
         //set player x velocity to 0 so the player just will move when you press arrow keys
         this.player.body.velocity.x=0;
         
+        //enemy rats
+        //this.rats.body.velocity.x = 100;
+        this.enemyRats();
         //kiling barrels
       /*  this.barrels.forEach(function(element){
             if (element.x < 10 && element.y >600){
@@ -192,26 +219,18 @@ var GameState = {
         
       
         
-        if(this.cursors.left.isDown || this.player.customParams.isMovingLeft){
+        if(this.cursors.left.isDown || game.input.keyboard.isDown(Phaser.Keyboard.A) || this.player.customParams.isMovingLeft){
             this.player.body.velocity.x = -this.RUNNING_SPEED;
             this.player.scale.setTo(-1,1); //flipping player sprite
             this.player.play('walking');
             
         }
-        else if(this.cursors.right.isDown || this.player.customParams.isMovingRight){
+        else if(this.cursors.right.isDown || game.input.keyboard.isDown(Phaser.Keyboard.D) || this.player.customParams.isMovingRight){
             this.player.body.velocity.x = this.RUNNING_SPEED;
             this.player.scale.setTo(1,1); //flipping player sprite
             this.player.play('walking'); 
         }
-        else if((this.cursors.up.isDown || this.player.customParams.mustJump) && (this.player.body.onFloor() || this.player.body.touching.down) ){
-            this.player.body.velocity.y= -this.JUMPING_SPEED;
-            this.player.frame =2;
-            this.player.customParams.mustJump = false;
-            this.jumpSound.play();
-            
-                    
-            
-        }
+        
         else{
                 this.player.animations.stop();
                 if( this.player.body.onFloor()){
@@ -223,10 +242,21 @@ var GameState = {
                 this.jumpSound.play();
             }
         }
+
+
+        //  Allow the player to jump if they are touching the ground.
+        if((this.cursors.up.isDown || game.input.keyboard.isDown(Phaser.Keyboard.W) || this.player.customParams.mustJump) && (this.player.body.onFloor() || this.player.body.touching.down) ){
+            this.player.body.velocity.y= -this.JUMPING_SPEED;
+            this.player.frame =2;
+            this.player.customParams.mustJump = false;
+            this.jumpSound.play();
+     
+        }
     },
     
     
     createOnscreenControls: function(){
+        
         this.leftArrow = this.add.button(20, 535, 'arrowButton');
         this.rightArrow = this.add.button(110, 535, 'arrowButton');
         this.actionButton = this.add.button(280, 535, 'actionButton');
@@ -236,7 +266,7 @@ var GameState = {
         this.actionButton.alpha = 0.5;
         
         //fixed screen button possition although the camera is moving
-       this.leftArrow.fixedToCamera = true;
+        this.leftArrow.fixedToCamera = true;
         this.rightArrow.fixedToCamera = true;
         this.actionButton.fixedToCamera = true;
         
@@ -287,13 +317,14 @@ var GameState = {
     
     createLevel: function(){
         
+        
         //set background color
         this.game.stage.backgroundColor='#000000';
         
         //load tiled map
         this.level=this.add.tilemap('towerUp1');
         
-        this.level.addTilesetImage('blackAndWhiteTiles', 'tiles');
+        this.level.addTilesetImage('blackAndWhiteTiles01', 'tiles');
         
         //create level layers
         
@@ -304,6 +335,7 @@ var GameState = {
         this.layerBorder = this.level.createLayer('Border');
         this.layerDoor = this.level.createLayer('Door');
         this.layerEnemy = this.level.createLayer('Enemy');
+        this.layerEnemyLimit = this.level.createLayer('EnemyLimit')
         
         game.world.setBounds(0, 0, this.level.width*32, this.level.height*32);
         
@@ -313,6 +345,7 @@ var GameState = {
         this.level.setCollisionBetween(0, 576, true, 'Platform');
         this.level.setCollisionBetween(0, 576, true, 'Border');
         this.level.setCollisionBetween(0, 576, true, 'Wall');
+         this.level.setCollisionBetween(0, 576, true, 'EnemyLimit');
         this.level.setCollisionBetween(0, 576, true, 'Enemy');
      
         
@@ -359,6 +392,28 @@ var GameState = {
                 
             
      
+    },
+    
+    enemyRats: function(){
+        
+        this.rats.body.velocity.x = this.RATS_SPEED;
+        this.rats.play('walk', true);
+        this.rats.body.bounce.set(1,.1);
+        
+    },
+    
+    ratsColideWall: function(){
+        
+        
+        //this.rats.animations.stop(null, true);
+        //this.rats.play('attack');
+        
+
+        this.RATS_SPEED*= (-1);
+         this.rats.scale.x *=(-1)
+        
+        
+       
     },
     
     createBarrel: function (){
